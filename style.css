@@ -1,0 +1,209 @@
+/* --- GIỮ NGUYÊN PHẦN CŨ, CHỈ THAY ĐỔI/THÊM PHẦN MUSIC PLAYER DƯỚI ĐÂY --- */
+
+/* --- CẤU HÌNH CƠ BẢN & SCROLLBAR MƯỢT (ANTI-JUMP) --- */
+:root {
+    --bg-color: #0d1117; 
+    --text-main: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff; 
+    --glass: rgba(22, 27, 34, 0.98);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --font-title: 'Dancing Script', cursive;
+    --font-body: 'Comfortaa', cursive; 
+    --anim-speed: 0.8s;
+    --anim-curve: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* FIX LỖI GIỰT MÀN HÌNH (QUAN TRỌNG) */
+html {
+    /* Luôn dành ra khoảng trống cho thanh cuộn, dù có hiện hay không */
+    scrollbar-gutter: stable; 
+}
+
+/* THIẾT KẾ THANH CUỘN "TÀNG HÌNH" */
+::-webkit-scrollbar {
+    width: 10px; /* Độ rộng vừa phải */
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; /* Nền trong suốt hoàn toàn */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1); /* Màu thanh cuộn mờ ảo */
+    border-radius: 20px; /* Bo tròn viên thuốc */
+    border: 3px solid transparent; /* Tạo khoảng hở so với mép */
+    background-clip: content-box; /* Chỉ tô màu phần nội dung, chừa viền ra */
+    transition: background-color 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent); /* Sáng lên khi chuột chạm vào */
+}
+
+/* CÁC THIẾT LẬP CHUNG */
+* { 
+    margin: 0; padding: 0; box-sizing: border-box; 
+    transition: all var(--anim-speed) var(--anim-curve); 
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    overflow-x: hidden; /* Chỉ ẩn thanh cuộn ngang */
+    overflow-y: auto;   /* Thanh dọc tự động hiện khi cần */
+    min-height: 100vh;
+}
+
+/* ... (Các phần body, scrollbar, particles, view, button giữ nguyên như cũ) ... */
+/* Bạn copy phần cấu hình chung ở các bước trước vào đây nếu bị mất */
+body.warm-theme { --bg-color: #2c1810; --text-main: #ffebd6; --text-dim: #d4b49c; --accent: #ff9e64; --glass: rgba(60, 30, 20, 0.98); }
+body.forest-theme { --bg-color: #142615; --text-main: #e8f5e9; --text-dim: #a5d6a7; --accent: #81c784; --glass: rgba(20, 38, 21, 0.95); }
+body.dream-theme { --bg-color: #1a0b2e; --text-main: #f3e5f5; --text-dim: #ce93d8; --accent: #d4a5a5; --glass: rgba(26, 11, 46, 0.95); }
+body.cold-theme { --bg-color: #1e272e; --text-main: #d2dae2; --text-dim: #808e9b; --accent: #4bcffa; --glass: rgba(30, 39, 46, 0.95); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.4s ease; }
+/* ... (Copy lại phần Particles, Float Btn, Sidebar, Toast từ bài trước vào đây) ... */
+#particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.particle { position: absolute; background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; opacity: 0.4; animation: float linear infinite; }
+@keyframes float { from { transform: translateY(110vh); } to { transform: translateY(-10vh); } }
+
+.float-btn { width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); backdrop-filter: blur(5px); color: var(--text-main); font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); position: relative; z-index: 50; pointer-events: auto; }
+.float-btn:hover { background: var(--accent); color: #000; transform: scale(1.1); }
+.left-pos { position: fixed; top: 25px; left: 25px; display: none; }
+.right-group { position: fixed; top: 25px; right: 25px; display: flex; gap: 15px; z-index: 50;}
+
+.sidebar { position: fixed; top: 0; bottom: 0; width: 400px; background: var(--glass); backdrop-filter: blur(30px); border-right: 1px solid var(--glass-border); padding: 40px 30px; z-index: 100; transform: translateX(-100%); box-shadow: 10px 0 50px rgba(0,0,0,0.8); overflow-y: auto; }
+.right-side { right: 0; left: auto; transform: translateX(100%); border-left: 1px solid var(--glass-border); border-right: none; }
+.sidebar.active { transform: translateX(0); }
+.menu-title { font-family: var(--font-title); font-size: 2.5rem; margin-bottom: 20px; color: var(--accent); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+.close-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-dim); cursor: pointer; position: absolute; top: 25px; right: 25px; }
+
+/* === PLAYER NHẠC OFFLINE (MỚI) === */
+.current-track-card {
+    background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px;
+    text-align: center; margin-bottom: 20px; border: 1px solid var(--glass-border);
+}
+
+/* Đĩa nhạc quay */
+.disk-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
+.disk {
+    width: 120px; height: 120px; border-radius: 50%;
+    background: radial-gradient(circle, #333 10%, #111 11%, #000 100%);
+    border: 3px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem; color: var(--accent);
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    animation: spinDisk 10s linear infinite;
+    animation-play-state: paused; /* Mặc định dừng */
+}
+.disk.playing { animation-play-state: running; }
+@keyframes spinDisk { 100% { transform: rotate(360deg); } }
+
+.track-info { margin-bottom: 20px; }
+#track-name { display: block; font-weight: bold; font-size: 1.1rem; color: var(--text-main); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#track-artist { font-size: 0.9rem; color: var(--text-dim); }
+
+/* Thanh chạy nhạc (Custom Slider) */
+.progress-container { width: 100%; margin-bottom: 20px; }
+input[type=range] {
+    width: 100%; -webkit-appearance: none; background: rgba(255,255,255,0.1);
+    height: 4px; border-radius: 2px; outline: none; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+    background: var(--accent); cursor: pointer; transition: transform 0.2s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.5); }
+.time-display { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); margin-top: 8px; }
+
+/* Nút điều khiển */
+.controls { display: flex; justify-content: center; align-items: center; gap: 25px; }
+.controls button { background: none; border: none; color: var(--text-main); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+.controls button:hover { color: var(--accent); }
+.play-btn-main {
+    width: 55px; height: 55px; background: var(--accent) !important; 
+    color: #000 !important; border-radius: 50%; font-size: 1.5rem !important;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 15px var(--accent);
+}
+.play-btn-main:hover { transform: scale(1.1); }
+
+/* Công cụ thư viện */
+.library-controls { margin-bottom: 15px; border-top: 1px solid var(--glass-border); padding-top: 20px; }
+.add-music-btn {
+    width: 100%; padding: 12px; background: rgba(255,255,255,0.1);
+    border: 1px dashed var(--accent); border-radius: 10px;
+    color: var(--accent); cursor: pointer; margin-bottom: 15px;
+    font-family: var(--font-body); display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.add-music-btn:hover { background: var(--accent); color: #000; border-style: solid; }
+
+.search-box { display: flex; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; border: 1px solid var(--glass-border); }
+.search-box input { width: 100%; background: none; border: none; color: white; padding-left: 10px; outline: none; font-family: var(--font-body); }
+
+/* Danh sách nhạc */
+.playlist-scroll { list-style: none; max-height: 250px; overflow-y: auto; padding-right: 5px; }
+.song-item {
+    padding: 12px; border-radius: 10px; margin-bottom: 8px;
+    background: rgba(255,255,255,0.02); cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    border-left: 3px solid transparent; transition: all 0.2s;
+}
+.song-item:hover { background: rgba(255,255,255,0.08); }
+.song-item.active { background: rgba(255,255,255,0.1); border-left-color: var(--accent); }
+.song-item .s-name { font-weight: bold; font-size: 0.95rem; color: var(--text-main); display: block; }
+.song-item .s-dur { font-size: 0.8rem; color: var(--text-dim); }
+
+/* (Giữ nguyên phần Toast, View, Write, Read, v.v...) */
+#toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 200; width: max-content; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.toast { background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 50px; border: 1px solid var(--accent); color: var(--text-main); font-size: 0.95rem; box-shadow: 0 5px 20px rgba(0,0,0,0.5); animation: slideDown 0.5s ease; display: flex; align-items: center; gap: 10px; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+
+.view { display: none; padding: 100px 20px; min-height: 100vh; position: relative; z-index: 10; opacity: 0; transform: translateY(20px); }
+.view.active { display: block; animation: deepFadeIn var(--anim-speed) forwards; }
+@keyframes deepFadeIn { to { opacity: 1; transform: translateY(0); } }
+
+.center-box { text-align: center; max-width: 600px; margin: 15vh auto 0; }
+.logo { font-family: var(--font-title); font-size: 5rem; margin-bottom: 20px; }
+.intro { font-size: 1.1rem; color: var(--text-dim); margin-bottom: 60px; font-style: italic; }
+.soft-btn { padding: 12px 35px; border-radius: 50px; border: none; font-family: var(--font-body); font-weight: bold; cursor: pointer; font-size: 1rem; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.3s, box-shadow 0.3s; }
+.primary { background: var(--text-main); color: var(--bg-color); }
+.primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
+.secondary { background: transparent; border: 1px solid var(--text-dim); color: var(--text-main); margin-left: 20px; }
+.secondary:hover { border-color: var(--text-main); background: rgba(255,255,255,0.1); }
+
+.editor-container { max-width: 700px; margin: 0 auto; }
+.input-nick, .input-title { width: 100%; background: none; border: none; outline: none; font-family: var(--font-body); }
+.input-nick { color: var(--text-dim); font-size: 1rem; margin-bottom: 20px; }
+.input-title { color: var(--text-main); font-size: 2.2rem; font-weight: bold; margin-bottom: 40px; border-bottom: 1px dashed var(--glass-border); padding-bottom: 15px; }
+.rich-editor { min-height: 300px; font-size: 1.3rem; line-height: 1.8; color: var(--text-main); outline: none; margin-bottom: 30px; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; max-width: 100%; }
+.rich-editor:empty:before { content: attr(placeholder); color: rgba(255,255,255,0.2); }
+.rich-editor img { display: inline-block; border-radius: 15px; max-width: 100%; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 2px solid transparent; transition: width 0.2s ease; }
+.rich-editor img.active-img { border-color: var(--accent); box-shadow: 0 0 15px var(--accent); }
+.img-slider-control { width: 200px; margin: 10px auto; display: block; accent-color: var(--accent); }
+.editor-tools { display: flex; gap: 15px; align-items: center; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 20px; margin-bottom: 40px; border: 1px solid var(--glass-border); }
+.tool-btn { background: rgba(255,255,255,0.1); border: none; color: var(--text-main); padding: 10px 20px; border-radius: 15px; cursor: pointer; }
+#preview-box img { height: 50px; border-radius: 8px; border: 1px solid var(--accent); margin-left: 10px; cursor: pointer; }
+
+.story-wrapper { max-width: 700px; margin: 0 auto; text-align: center; }
+.read-title { font-family: var(--font-title); font-size: 4rem; margin-bottom: 20px; }
+.read-author { color: var(--text-dim); margin-bottom: 60px; font-style: italic; }
+.read-content { text-align: justify; font-size: 1.3rem; line-height: 1.8; color: var(--text-main); white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; max-width: 100%; }
+.read-content img { display: block; max-width: 100%; height: auto; border-radius: 15px; margin: 30px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+.read-nav { margin-top: 60px; display: flex; flex-direction: column; align-items: center; gap: 20px; padding-bottom: 50px; }
+.next-btn { width: 100%; max-width: 300px; justify-content: center; }
+
+.article-list { margin-top: 30px; }
+.article-item { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 20px; cursor: pointer; border: 1px solid transparent; transition: all 0.3s; opacity: 0; animation: slideInList 0.6s forwards; }
+.article-item:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); transform: translateX(5px); }
+.article-date { font-size: 0.8rem; color: var(--text-dim); display: block; margin-bottom: 8px; }
+.article-title { font-size: 1.1rem; font-weight: bold; color: var(--text-main); }
+@keyframes slideInList { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+.article-item:nth-child(1) { animation-delay: 0.1s; } .article-item:nth-child(2) { animation-delay: 0.2s; } .article-item:nth-child(3) { animation-delay: 0.3s; }
+
+.theme-item { width: 100%; padding: 15px; background: rgba(255,255,255,0.05); border: none; color: var(--text-main); border-radius: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; font-family: var(--font-body); }
+.color-dot { width: 20px; height: 20px; border-radius: 50%; background: #0d1117; border: 2px solid #fff; }
+.warm-dot { background: #2c1810; border-color: #ff9e64; }
+.theme-item.active { border: 1px solid var(--accent); background: rgba(255,255,255,0.1); }

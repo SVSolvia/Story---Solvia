@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Solvia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;500;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="particles-container"></div>
+    <div id="toast-container"></div>
+
+    <button id="btn-read-list" class="float-btn left-pos" onclick="toggleSidebar('left')" title="Góc đọc sách">
+        <i class="fas fa-book-open"></i>
+    </button>
+
+    <div class="right-group">
+        <button class="float-btn" onclick="toggleSidebar('settings')" title="Cài đặt">
+            <i class="fas fa-cog"></i>
+        </button>
+        <button class="float-btn" onclick="toggleSidebar('music')" title="Kho nhạc cá nhân">
+            <i class="fas fa-music"></i>
+        </button>
+    </div>
+
+    <div id="sidebar-left" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar('left')">&times;</button>
+        <h3 class="menu-title">Góc Lưu Trữ</h3>
+        <ul id="saved-articles" class="article-list">
+            <p style="text-align:center; opacity:0.5; margin-top:20px;">Chưa có bài viết nào...</p>
+        </ul>
+    </div>
+
+    <div id="sidebar-music" class="sidebar right-side">
+        <button class="close-btn" onclick="toggleSidebar('music')">&times;</button>
+        <h3 class="menu-title">Chill Player</h3>
+        
+        <div class="music-player">
+            <div class="current-track-card">
+                <div class="disk-wrapper">
+                    <div class="disk" id="disk-cover">
+                        <i class="fas fa-music"></i>
+                    </div>
+                </div>
+                <div class="track-info">
+                    <span id="track-name">Chưa chọn nhạc...</span>
+                    <span id="track-artist">--:--</span>
+                </div>
+
+                <div class="progress-container">
+                    <input type="range" id="seek-slider" min="0" max="100" value="0" oninput="seekTo()">
+                    <div class="time-display">
+                        <span id="current-time">00:00</span>
+                        <span id="total-duration">00:00</span>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button onclick="prevSong()"><i class="fas fa-step-backward"></i></button>
+                    <button class="play-btn-main" onclick="togglePlay()">
+                        <i id="play-icon" class="fas fa-play"></i>
+                    </button>
+                    <button onclick="nextSong()"><i class="fas fa-step-forward"></i></button>
+                </div>
+            </div>
+
+            <div class="library-controls">
+                <input type="file" id="music-upload" accept="audio/*" multiple hidden onchange="handleMusicFiles(this)">
+                <button class="add-music-btn" onclick="document.getElementById('music-upload').click()">
+                    <i class="fas fa-folder-plus"></i> Thêm nhạc từ máy
+                </button>
+                
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="music-search" placeholder="Tìm bài hát..." onkeyup="filterPlaylist()">
+                </div>
+            </div>
+
+            <ul id="playlist" class="playlist-scroll">
+                <li style="text-align:center; padding:20px; opacity:0.6; font-style:italic;">
+                    Danh sách đang trống.<br>Hãy nhấn "Thêm nhạc từ máy" để chill nhé!
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="sidebar-settings" class="sidebar right-side">
+        <button class="close-btn" onclick="toggleSidebar('settings')">&times;</button>
+        <h3 class="menu-title">Màu Cảm Xúc</h3>
+        <div class="theme-picker">
+            <button class="theme-item night active" onclick="setTheme('night')"><div class="color-dot"></div> Đêm thâu</button>
+            <button class="theme-item warm" onclick="setTheme('warm')"><div class="color-dot warm-dot"></div> Ấm áp</button>
+            <button class="theme-item forest" onclick="setTheme('forest')"><div class="color-dot" style="background:#142615; border-color:#81c784"></div> Chữa lành</button>
+            <button class="theme-item dream" onclick="setTheme('dream')"><div class="color-dot" style="background:#1a0b2e; border-color:#d4a5a5"></div> Mộng mơ</button>
+            <button class="theme-item cold" onclick="setTheme('cold')"><div class="color-dot" style="background:#1e272e; border-color:#4bcffa"></div> Lạnh giá</button>
+        </div>
+    </div>
+
+    <main id="main-content">
+        <section id="home-view" class="view active">
+            <div class="center-box">
+                <h1 class="logo">Story Solvia</h1>
+                <p class="intro">"Nơi những nỗi niềm được vỗ về."</p>
+                <div class="home-actions">
+                    <button class="soft-btn primary" onclick="goToWrite()"><i class="fas fa-pen-nib"></i> Viết lên tâm sự</button>
+                    <button class="soft-btn secondary" onclick="goToRead()"><i class="fas fa-glasses"></i> Đọc những nỗi niềm</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="write-view" class="view">
+            <div class="editor-container">
+                <input type="text" placeholder="Tên ẩn danh..." class="input-nick">
+                <input type="text" placeholder="Tiêu đề..." class="input-title">
+                <div id="editor" class="rich-editor" contenteditable="true" placeholder="Viết đi, đừng ngại..."></div>
+                <div class="editor-tools">
+                    <input type="file" id="img-upload" hidden onchange="handleImage(this)">
+                    <button class="tool-btn" onclick="document.getElementById('img-upload').click()"><i class="fas fa-image"></i> Chọn ảnh</button>
+                    <div id="preview-box"></div>
+                </div>
+                <div class="action-row">
+                    <button class="soft-btn back-btn" onclick="goHome()">Quay lại</button>
+                    <button class="soft-btn submit-btn" onclick="submitStory()">Gửi bài</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="read-view" class="view">
+            <article class="story-wrapper">
+                <h1 class="read-title">...</h1>
+                <p class="read-author"></p>
+                <div class="read-content"></div>
+                <div class="read-nav">
+                    <button class="soft-btn primary next-btn" onclick="nextStory()">Câu chuyện tiếp theo <i class="fas fa-arrow-down"></i></button>
+                    <button class="soft-btn back-home" onclick="goHome()">Trở về</button>
+                </div>
+            </article>
+        </section>
+    </main>
+<script type="module" src="script.js"></script>
+
+</body>
+</html>
