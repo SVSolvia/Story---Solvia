@@ -7,7 +7,7 @@ import { getFirestore, collection, addDoc, getDocs, orderBy, query } from "https
 // Dùng bộ thư viện Storage
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-// --- DÁN MÃ CONFIG CỦA DỰ ÁN PHOTOBOOTH VÀO ĐÂY ---
+// --- CẤU HÌNH DỰ ÁN CỦA BẠN ---
 const firebaseConfig = {
     apiKey: "AIzaSyDhTpzZw4kWvlNjPag1CguFmQy-XoRQl_4",
     authDomain: "chat-3407.firebaseapp.com",
@@ -18,7 +18,6 @@ const firebaseConfig = {
     appId: "1:645134241923:web:3479bed824394302aa4bb6",
     measurementId: "G-X3EL784VPT"
 };
-
 // --------------------------------------------------
 
 const app = initializeApp(firebaseConfig);
@@ -53,8 +52,18 @@ const defaultSongs = [
     { name: "Sad Girl - Lana Dey Rey", url: "music/Sad Girl - Lana Dey Rey.mp3" },
     { name: "Summertime Sadness - Lana Del Rey", url: "music/Summertime Sadness - Lana Del Rey.mp3" },
     { name: "Young and Beautiful - Lana Dey Rey", url: "music/Young and Beautiful - Lana Dey Rey.mp3" },
-      { name: "Cinnamon Girl - Lana Dey Rey", url: "music/Cinnamon Girl - Lana Dey Rey.mp3" },
-         { name: "Brooklyn Baby - Lana Del Rey", url: "music/Brooklyn Baby - Lana Del Rey.mp3" },
+    { name: "Cinnamon Girl - Lana Dey Rey", url: "music/Cinnamon Girl - Lana Dey Rey.mp3" },
+    { name: "Brooklyn Baby - Lana Del Rey", url: "music/Brooklyn Baby - Lana Del Rey.mp3" },
+    { name: "Say Yes To Heaven - Lana Del Rey", url: "music/Say Yes To Heaven - Lana Del Rey.mp3" },
+    { name: "Lovely - Billie Eilish, Khalid", url: "music/Lovely - Billie Eilish, Khalid.mp3" },
+    { name: "Take Me To Church - Hozier", url: "music/Take Me To Church - Hozier.mp3" },
+    { name: "Daylight - David Kushner", url: "music/Daylight - David Kushner.mp3" },
+    { name: "Until I Found You - Stephen Sanchez", url: "music/Until I Found You - Stephen Sanchez.mp3" },
+    { name: "Chemtrails Over The Country Club - Lana Del Rey", url: "music/Chemtrails Over The Country Club - Lana Del Rey.mp3" },
+    { name: "I Wanna Be Yours", url: "music/I Wanna Be Yours.mp3" },
+    { name: "Die With A Smile - Lady Gaga, Bruno Mars", url: "music/Die With A Smile - Lady Gaga, Bruno Mars.mp3" },
+
+
 ];
 
 let playlist = [...defaultSongs];
@@ -196,7 +205,7 @@ async function uploadImagesInContent(htmlContent) {
         // Chỉ xử lý ảnh là Blob (Link tạm)
         if (img.src.startsWith('blob:')) {
             try {
-                showToast("Đang đẩy ảnh lên mây...");
+                showToast("Đang lưu lại khoảnh khắc vô giá này...");
                 const response = await fetch(img.src);
                 const blob = await response.blob();
                 
@@ -211,10 +220,10 @@ async function uploadImagesInContent(htmlContent) {
                 const downloadUrl = await getDownloadURL(imgRef);
                 img.src = downloadUrl; // Thay thế link blob bằng link thật
                 
-                console.log("Upload ảnh thành công:", downloadUrl);
+                console.log("Một bức ảnh thay vạn lời nói. Đã lưu giữ xong.", downloadUrl);
             } catch (err) {
                 console.error("Lỗi up ảnh:", err);
-                showToast("Lỗi upload ảnh! Kiểm tra Console.");
+                showToast("Lỗi upload ảnh!");
             }
         }
     }
@@ -230,7 +239,7 @@ window.submitStory = async function() {
     const originalText = "Gửi bài";
 
     if (!content.trim() || content === '<br>') {
-        showToast("Viết gì đó đi bạn ơi...");
+        showToast("Khoan đã... hình như lòng bạn vẫn đang ngập ngừng? Hít thở sâu và để cảm xúc dẫn lối nhé.");
         return;
     }
 
@@ -249,7 +258,7 @@ window.submitStory = async function() {
         });
 
         btn.innerHTML = originalText;
-        showToast("Đã lưu thành công!");
+        showToast("Đã gửi vào thinh không. Hy vọng lòng bạn giờ đã bình yên hơn");
         
         // 3. Reset form
         document.querySelector('.input-nick').value = "";
@@ -262,13 +271,13 @@ window.submitStory = async function() {
 
         setTimeout(() => {
             goHome();
-            showToast("Bài viết đã được lưu trữ.");
+            showToast("Câu chuyện đã được cất giữ an toàn. Cảm ơn bạn đã dũng cảm đối diện với nó.");
         }, 1000);
 
     } catch (e) {
         console.error("Lỗi Firestore:", e);
         btn.innerHTML = originalText;
-        showToast("Lỗi kết nối! Kiểm tra Console (F12).");
+        showToast("Có chút trục trặc... Có lẽ vũ trụ muốn bạn chậm lại một nhịp. Hãy thử lại nhé.");
     }
 }
 
@@ -299,7 +308,7 @@ async function fetchStoriesFromFirebase() {
 
     } catch (error) {
         console.error("Lỗi tải bài viết:", error);
-        list.innerHTML = '<p style="text-align:center; opacity:0.5">Lỗi tải dữ liệu. Xem Console.</p>';
+        list.innerHTML = '<p style="text-align:center; opacity:0.5">Lỗi tải dữ liệu</p>';
     }
 }
 // Chạy ngay khi mở web
@@ -312,7 +321,7 @@ window.renderArticleList = function() {
     list.innerHTML = ''; 
 
     if (stories.length === 0) {
-        list.innerHTML = '<p style="text-align:center; opacity:0.5; margin-top:20px;">Chưa có bài nào...</p>';
+        list.innerHTML = '<p style="text-align:center; opacity:0.5; margin-top:20px;">Góc nhỏ này vẫn đang đợi người đầu tiên mở lời...</p>';
         return;
     }
 
@@ -346,29 +355,65 @@ window.nextStory = function() {
         const contentArea = document.querySelector('.story-wrapper');
         contentArea.style.opacity = 0; 
         setTimeout(() => { openArticle(nextArticle); contentArea.style.opacity = 1; }, 300);
-    } else { showToast("Đã hết bài cũ rồi..."); }
+    } else { showToast("Đã hết những dòng tâm sự cũ. Hãy quay lại sau nhé."); }
 }
 
 /* =========================================
-   4. ĐIỀU HƯỚNG GIAO DIỆN & TIỆN ÍCH
+   4. ĐIỀU HƯỚNG GIAO DIỆN & TIỆN ÍCH (ĐÃ SỬA: THÊM LẠI CÁC THÔNG BÁO)
    ========================================= */
+
+// Biến cờ: Nhớ xem đã hiện gợi ý đọc chưa
+let hasShownReadHint = false; 
+
 window.switchView = function(viewId) {
-    document.querySelectorAll('.view').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
+    // Ẩn tất cả view cũ
+    document.querySelectorAll('.view').forEach(el => { 
+        el.classList.remove('active'); 
+        el.style.display = 'none'; 
+    });
+
+    // Hiện view mới
     const target = document.getElementById(viewId);
-    if (target) { target.style.display = 'block'; setTimeout(() => target.classList.add('active'), 50); }
+    if (target) { 
+        target.style.display = 'block'; 
+        setTimeout(() => target.classList.add('active'), 50); 
+    }
+    
     window.scrollTo(0,0);
+
     const btnList = document.getElementById('btn-read-list');
     if (btnList) btnList.style.display = (viewId === 'read-view') ? 'block' : 'none';
+
+    /* --- XỬ LÝ THÔNG BÁO --- */
+    
+    // 1. Vào trang VIẾT: Luôn hiện
+    if (viewId === 'write-view') {
+        setTimeout(() => showToast("Đừng để không gian quá tĩnh lặng. Hãy để âm nhạc vỗ về bạn."), 1500);
+    } 
+    
+    // 2. Vào trang ĐỌC (Thư viện): Hiện 1 lần duy nhất
+    else if (viewId === 'read-view') {
+        // Bỏ điều kiện "&& stories.length > 0" để luôn hiện dù đang tải dữ liệu
+        if (!hasShownReadHint) { 
+            setTimeout(() => showToast("Những câu chuyện cũ vẫn nằm lặng lẽ ở góc trái, chờ người tri kỷ..."), 2000);
+            hasShownReadHint = true; // Đánh dấu đã hiện
+        }
+    }
 }
 
+// --- CÁC HÀM KHÁC GIỮ NGUYÊN ---
 window.goHome = function() { switchView('home-view'); }
 window.goToWrite = function() { switchView('write-view'); }
+
 window.goToRead = function() { 
     if (stories.length === 0) {
-        showToast("Đang tải dữ liệu...");
+        showToast("Đang kết nối với những miền ký ức...");
         switchView('read-view');
-    } else { openArticle(stories[0]); }
+    } else { 
+        openArticle(stories[0]); 
+    }
 }
+
 window.toggleSidebar = function(id) {
     const all = document.querySelectorAll('.sidebar');
     all.forEach(s => { if(s.id !== `sidebar-${id}`) s.classList.remove('active'); });
@@ -388,14 +433,34 @@ window.setTheme = function(mode) {
     showToast(msg);
 }
 
+/* =========================================
+   HÀM THÔNG BÁO THÔNG MINH (TỰ CHỈNH THỜI GIAN)
+   ========================================= */
 window.showToast = function(msg) {
     const container = document.getElementById('toast-container');
     if (!container) return;
+
+    let duration = 3000 + (msg.length * 50);
+
+    // 3. Giới hạn tối đa 10 giây (để không bị treo mãi)
+    if (duration > 10000) duration = 10000;
+
+    // Tạo thông báo
     const toast = document.createElement('div');
     toast.className = 'toast';
-    toast.innerHTML = `<i class="fas fa-heart" style="color:var(--accent)"></i> ${msg}`;
+    
+    // Thêm nội dung
+    toast.innerHTML = `<i class="fas fa-heart" style="color:var(--accent); margin-right: 8px;"></i> ${msg}`;
+    
+    // Hiện lên đầu danh sách (Xếp chồng)
     container.prepend(toast); 
-    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 4000);
+
+    // Ẩn sau khoảng thời gian đã tính (duration)
+    setTimeout(() => { 
+        toast.style.opacity = '0'; 
+        toast.style.transform = 'translateY(-20px)'; 
+        setTimeout(() => toast.remove(), 500); 
+    }, duration);
 }
 
 // XỬ LÝ ẢNH (BLOB)
