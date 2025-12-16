@@ -27,20 +27,82 @@ const storage = getStorage(app); // Khởi tạo Storage
 /* =========================================
    1. HIỆU ỨNG (PARTICLES)
    ========================================= */
+/* =========================================
+   1. QUẢN LÝ HIỆU ỨNG NỀN (NÂNG CẤP)
+   ========================================= */
+/* =========================================
+   1. QUẢN LÝ HIỆU ỨNG NỀN (ĐÃ THÊM HIỆU ỨNG LỬA)
+   ========================================= */
+let currentEffect = 'snow'; // Mặc định
+
 window.createParticles = function() {
     const container = document.getElementById('particles-container');
-    if (!container) return; 
-    const particleCount = 20; 
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-        const size = Math.random() * 15 + 5 + 'px'; 
-        particle.style.width = size; particle.style.height = size;
-        particle.style.left = Math.random() * 100 + 'vw';
-        particle.style.animationDuration = (Math.random() * 15 + 15) + 's';
-        container.appendChild(particle);
+    if (!container) return;
+    
+    // Nếu đang chạy lửa thì xóa hết các hạt khác (tuyết/mưa) đi cho sạch
+    if (currentEffect === 'fire') {
+        container.innerHTML = '';
+        return; 
+    }
+    
+    // ... (Giữ nguyên logic tạo tuyết/mưa cũ ở đây) ...
+    container.innerHTML = ''; 
+    let count = 20; 
+    if (currentEffect === 'rain') count = 60;
+    if (currentEffect === 'firefly') count = 15;
+
+    for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.classList.add('particle', currentEffect);
+        
+        let size = Math.random() * 15 + 5; 
+        p.style.left = Math.random() * 100 + 'vw';
+        let duration = Math.random() * 15 + 15; 
+
+        if (currentEffect === 'rain') {
+            size = Math.random() * 2 + 1;
+            p.style.height = (Math.random() * 20 + 10) + 'px';
+            duration = Math.random() * 1 + 0.5;
+        } 
+        else if (currentEffect === 'firefly') {
+            size = Math.random() * 6 + 2;
+            p.style.animationDelay = Math.random() * 5 + 's';
+        }
+
+        p.style.width = size + 'px';
+        if (currentEffect !== 'rain') p.style.height = size + 'px';
+        p.style.animationDuration = duration + 's';
+        
+        container.appendChild(p);
     }
 }
+
+// Hàm chuyển đổi hiệu ứng
+// Hàm chuyển đổi hiệu ứng (ĐÃ NÂNG CẤP LOGIC LỬA)
+// Hàm chuyển đổi hiệu ứng (ĐÃ TÍCH HỢP LỬA CHÂN THỰC)
+window.setEffect = function(type) {
+    currentEffect = type;
+    
+    // --- XỬ LÝ LỬA ĐIỆN ẢNH ---
+    if (type === 'fire') {
+        startCinematicFire();
+    } else {
+        stopCinematicFire();
+    }
+    // ---------------------------
+
+    // Logic tạo hạt bay khác
+    window.createParticles(); 
+    
+    let msg = "";
+    if(type === 'snow') msg = "Tuyết rơi lạnh giá";
+    if(type === 'firefly') msg = "Đom đóm mùa hạ";
+    if(type === 'rain') msg = "Mưa tuôn nỗi niềm";
+    if(type === 'fire') msg = "Ngọn lửa đam mê";
+    showToast(`Đã chuyển hiệu ứng: ${msg}`);
+}
+
+// Khởi chạy
 window.createParticles();
 
 /* =========================================
@@ -420,16 +482,55 @@ window.toggleSidebar = function(id) {
     document.getElementById(`sidebar-${id}`).classList.toggle('active');
 }
 
+/* =========================================
+   HÀM ĐỔI MÀU GIAO DIỆN (NEW PALETTE)
+   ========================================= */
 window.setTheme = function(mode) {
     const body = document.body;
-    body.classList.remove('warm-theme', 'forest-theme', 'dream-theme', 'cold-theme');
+    
+    // 1. Xóa sạch các class màu cũ
+    body.classList.remove(
+        'warm-theme', 'forest-theme', 'dream-theme', 'cold-theme', 
+        'sakura-theme', 'coffee-theme', 'cyber-theme', 'royal-theme'
+    );
+    
+    // 2. Reset nút active
     document.querySelectorAll('.theme-item').forEach(btn => btn.classList.remove('active'));
+    
     let msg = "";
-    if (mode === 'night') { document.querySelector('.theme-item.night').classList.add('active'); msg = "Đêm thâu"; } 
+
+    // 3. Kích hoạt màu (Giữ lại các màu cơ bản cũ + 4 màu mới)
+    if (mode === 'night') { 
+        document.querySelector('.theme-item.night').classList.add('active'); 
+        msg = "Đêm thâu tĩnh lặng"; 
+    } 
     else if (mode === 'warm') { body.classList.add('warm-theme'); document.querySelector('.theme-item.warm').classList.add('active'); msg = "Ấm áp"; }
-    else if (mode === 'forest') { body.classList.add('forest-theme'); document.querySelector('.theme-item.forest').classList.add('active'); msg = "Chữa lành"; }
+    else if (mode === 'forest') { body.classList.add('forest-theme'); document.querySelector('.theme-item.forest').classList.add('active'); msg = "Rừng xanh"; }
     else if (mode === 'dream') { body.classList.add('dream-theme'); document.querySelector('.theme-item.dream').classList.add('active'); msg = "Mộng mơ"; }
     else if (mode === 'cold') { body.classList.add('cold-theme'); document.querySelector('.theme-item.cold').classList.add('active'); msg = "Lạnh giá"; }
+    
+    // --- 4 MÀU MỚI (ĐẸP HƠN) ---
+    else if (mode === 'sakura') { 
+        body.classList.add('sakura-theme'); 
+        document.querySelector('.theme-item.sakura').classList.add('active'); 
+        msg = "Sakura lãng mạn"; 
+    }
+    else if (mode === 'coffee') { 
+        body.classList.add('coffee-theme'); 
+        document.querySelector('.theme-item.coffee').classList.add('active'); 
+        msg = "Coffee House Chill"; 
+    }
+    else if (mode === 'cyber') { 
+        body.classList.add('cyber-theme'); 
+        document.querySelector('.theme-item.cyber').classList.add('active'); 
+        msg = "Cyberpunk Future"; 
+    }
+    else if (mode === 'royal') { 
+        body.classList.add('royal-theme'); 
+        document.querySelector('.theme-item.royal').classList.add('active'); 
+        msg = "Hoàng Gia Sang Trọng"; 
+    }
+
     showToast(msg);
 }
 
@@ -440,6 +541,10 @@ window.showToast = function(msg) {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
+    // --- CÔNG THỨC TÍNH THỜI GIAN ---
+    // 1. Mặc định ít nhất 3000ms (3 giây) cho các câu ngắn.
+    // 2. Cộng thêm 50ms cho mỗi ký tự trong câu.
+    // Ví dụ: Câu 100 chữ cái sẽ hiện thêm 5 giây -> Tổng 8 giây.
     let duration = 3000 + (msg.length * 50);
 
     // 3. Giới hạn tối đa 10 giây (để không bị treo mãi)
@@ -464,42 +569,387 @@ window.showToast = function(msg) {
 }
 
 // XỬ LÝ ẢNH (BLOB)
+/* =========================================
+   XỬ LÝ ẢNH & KÉO GÓC (NEW - RESIZE HANDLE)
+   ========================================= */
+// Lấy các phần tử cần thiết
+// Lưu ý: Biến 'editor' đã được khai báo ở phần Toolbar bên dưới, 
+// nhưng để chắc chắn code chạy đúng thứ tự, ta lấy lại tham chiếu ở đây.
+const editorRef = document.getElementById('editor'); 
+const resizeHandle = document.getElementById('resize-handle');
+let currentImg = null; // Ảnh đang chọn
+let isResizing = false;
+let startX, startWidth;
+
+// 1. CHỌN ẢNH (Ủy quyền sự kiện - Bắt dính mọi ảnh được paste/upload)
+editorRef.addEventListener('click', function(e) {
+    if (e.target.tagName === 'IMG') {
+        e.stopPropagation(); // Ngừng lan truyền click
+        selectImage(e.target);
+    } else {
+        deselectImage(); // Bấm ra ngoài thì bỏ chọn
+    }
+});
+
+// 2. HÀM CHỌN ẢNH
+function selectImage(img) {
+    if (currentImg && currentImg !== img) deselectImage();
+    
+    currentImg = img;
+    currentImg.classList.add('active-img'); // Thêm viền xanh
+    
+    updateHandlePosition(); // Đưa nút kéo về đúng góc ảnh
+    resizeHandle.style.display = 'block'; // Hiện nút
+}
+
+// 3. HÀM BỎ CHỌN
+function deselectImage() {
+    if (currentImg) {
+        currentImg.classList.remove('active-img');
+        currentImg = null;
+    }
+    resizeHandle.style.display = 'none';
+}
+
+// 4. CẬP NHẬT VỊ TRÍ NÚT KÉO (Chạy liên tục khi cuộn trang)
+function updateHandlePosition() {
+    if (!currentImg) return;
+    
+    const rect = currentImg.getBoundingClientRect();
+    // Tính toán vị trí nút (Góc dưới phải) + Cuộn trang
+    const handleTop = rect.bottom + window.scrollY - 12; // -12 là nửa chiều cao nút
+    const handleLeft = rect.right + window.scrollX - 12;
+
+    resizeHandle.style.top = `${handleTop}px`;
+    resizeHandle.style.left = `${handleLeft}px`;
+}
+
+// Cập nhật vị trí khi cuộn hoặc thay đổi kích thước màn hình
+window.addEventListener('scroll', updateHandlePosition, true);
+window.addEventListener('resize', updateHandlePosition);
+editorRef.addEventListener('input', updateHandlePosition); // Khi gõ chữ làm ảnh chạy
+
+// 5. XỬ LÝ KÉO (LOGIC CHÍNH)
+const startResize = (clientX) => {
+    if (!currentImg) return;
+    isResizing = true;
+    startX = clientX;
+    startWidth = currentImg.offsetWidth; // Lấy chiều rộng hiện tại (pixel)
+    
+    // Tắt chọn văn bản để kéo cho mượt
+    document.body.style.userSelect = 'none';
+};
+
+const doResize = (clientX) => {
+    if (!isResizing || !currentImg) return;
+
+    // Tính khoảng cách đã kéo
+    const dx = clientX - startX;
+    const newPixelWidth = startWidth + dx;
+
+    // Quy đổi ra % để tương thích mobile
+    const editorWidth = editorRef.offsetWidth;
+    let newPercent = (newPixelWidth / editorWidth) * 100;
+
+    // Giới hạn Min 20% - Max 100%
+    if (newPercent < 20) newPercent = 20;
+    if (newPercent > 100) newPercent = 100;
+
+    currentImg.style.width = `${newPercent}%`;
+    updateHandlePosition(); // Nút chạy theo ảnh ngay lập tức
+};
+
+const stopResize = () => {
+    isResizing = false;
+    document.body.style.userSelect = ''; // Trả lại chọn văn bản
+};
+
+// --- Sự kiện cho MÁY TÍNH (Mouse) ---
+resizeHandle.addEventListener('mousedown', (e) => {
+    e.preventDefault(); 
+    startResize(e.clientX);
+});
+window.addEventListener('mousemove', (e) => doResize(e.clientX));
+window.addEventListener('mouseup', stopResize);
+
+// --- Sự kiện cho ĐIỆN THOẠI (Touch) ---
+resizeHandle.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // Chặn cuộn màn hình khi đang kéo
+    startResize(e.touches[0].clientX);
+});
+window.addEventListener('touchmove', (e) => {
+    if (isResizing) doResize(e.touches[0].clientX);
+});
+window.addEventListener('touchend', stopResize);
+
+// --- HÀM CHÈN ẢNH & UPLOAD (ĐÃ NÂNG CẤP) ---
+window.insertImageToEditor = function(src) {
+    editorRef.focus();
+    const img = document.createElement('img');
+    img.src = src;
+    img.style.width = "80%"; // Mặc định to 80%
+    
+    // Chèn vào vị trí con trỏ
+    const sel = window.getSelection();
+    if (sel.rangeCount > 0 && editorRef.contains(sel.anchorNode)) {
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(img);
+        range.collapse(false);
+    } else {
+        editorRef.appendChild(img);
+    }
+    
+    // Thêm dòng mới để viết tiếp
+    const div = document.createElement('div'); div.innerHTML = '<br>';
+    if (img.nextSibling) editorRef.insertBefore(div, img.nextSibling);
+    else editorRef.appendChild(div);
+
+    // Tự động chọn ảnh vừa chèn
+    setTimeout(() => selectImage(img), 100);
+}
+
+// Hàm xử lý file input (Upload ảnh)
 window.handleImage = function(input) {
     if (input.files && input.files[0]) {
         const file = input.files[0];
-        const blobUrl = URL.createObjectURL(file); // Dùng Blob URL
+        const blobUrl = URL.createObjectURL(file);
         
+        // Hiện preview nhỏ
         const previewBox = document.getElementById('preview-box');
-        previewBox.innerHTML = ''; 
-        const img = document.createElement('img');
-        img.src = blobUrl;
-        img.onclick = () => { insertImageToEditor(blobUrl); img.remove(); };
-        previewBox.appendChild(img);
-        showToast("Đã tải ảnh. Bấm vào ảnh nhỏ để chèn.");
+        previewBox.innerHTML = '';
+        const imgPre = document.createElement('img');
+        imgPre.src = blobUrl;
+        imgPre.onclick = () => insertImageToEditor(blobUrl);
+        previewBox.appendChild(imgPre);
+        
+        // Hoặc chèn luôn nếu muốn (tùy chọn)
+        showToast("Ảnh đã sẵn sàng. Bấm vào ảnh nhỏ để chèn.");
     }
 }
-let activeImg = null; 
-window.insertImageToEditor = function(src) {
-    const editor = document.getElementById('editor'); editor.focus();
-    const img = document.createElement('img'); img.src = src; img.style.width = "60%"; 
-    img.onclick = function(e) {
-        e.stopPropagation(); 
-        if(activeImg) activeImg.classList.remove('active-img');
-        this.classList.add('active-img'); activeImg = this;
-        showResizeSlider(this);
-    };
-    editor.appendChild(img); editor.appendChild(document.createElement('br'));
+/* =========================================
+   XỬ LÝ THANH CÔNG CỤ NỔI (FLOATING TOOLBAR)
+   ========================================= */
+const editor = document.getElementById('editor');
+const toolbar = document.getElementById('floating-toolbar');
+
+// 1. LẮNG NGHE SỰ THAY ĐỔI VÙNG CHỌN (BẤT KỂ CHUỘT HAY CẢM ỨNG)
+document.addEventListener('selectionchange', () => {
+    const selection = window.getSelection();
+
+    // Nếu không có gì được chọn hoặc vùng chọn rỗng -> Ẩn
+    if (selection.isCollapsed || !editor.contains(selection.anchorNode)) {
+        toolbar.style.display = 'none';
+        return;
+    }
+
+    // Lấy vị trí của vùng bôi đen
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    // Nếu vùng chọn nằm ngoài màn hình hoặc bị ẩn -> Ẩn toolbar
+    if (rect.width === 0 && rect.height === 0) {
+        toolbar.style.display = 'none';
+        return;
+    }
+
+    // 2. TÍNH TOÁN VỊ TRÍ ĐỂ HIỆN THANH CÔNG CỤ
+    // Hiện ngay trên đầu vùng bôi đen
+    // Cộng thêm window.scrollY để tính đúng khi cuộn trang
+    const top = rect.top + window.scrollY - 45; 
+    const left = rect.left + window.scrollX + (rect.width / 2);
+
+    toolbar.style.top = `${top}px`;
+    toolbar.style.left = `${left}px`;
+    toolbar.style.display = 'flex'; // Dùng flex để dàn ngang nút
+});
+
+// 3. HÀM THỰC HIỆN LỆNH (QUAN TRỌNG: DÙNG MOUSEDOWN ĐỂ GIỮ BÔI ĐEN)
+window.formatText = function(cmd) {
+    // event.preventDefault() đã được gọi ngầm nhờ onmousedown trong HTML
+    // Nó giúp nút bấm không "cướp" mất focus của văn bản
+    
+    document.execCommand(cmd, false, null);
+    
+    // Cập nhật lại vị trí toolbar (phòng khi căn lề làm chữ chạy đi chỗ khác)
+    // Gọi lại sự kiện selectionchange nhân tạo
+    document.dispatchEvent(new Event('selectionchange'));
 }
-window.showResizeSlider = function(targetImg) {
-    const oldSlider = document.getElementById('temp-slider'); if(oldSlider) oldSlider.remove();
-    const slider = document.createElement('input'); slider.type = 'range'; slider.min = '10'; slider.max = '100'; 
-    slider.value = parseInt(targetImg.style.width) || 60; slider.id = 'temp-slider'; slider.className = 'img-slider-control';
-    targetImg.parentNode.insertBefore(slider, targetImg.nextSibling);
-    slider.oninput = function() { targetImg.style.width = this.value + '%'; };
+
+// 4. CẤU HÌNH EDITOR: ENTER XUỐNG DÒNG LÀ THẺ DIV (ĐỂ CĂN LỀ CHUẨN)
+// Chạy dòng này 1 lần khi load trang
+document.execCommand('defaultParagraphSeparator', false, 'div');
+/* =========================================
+   BỘ MÁY TẠO LỬA CHÂN THỰC (CANVAS PARTICLE ENGINE)
+   ========================================= */
+/* =========================================
+   BỘ MÁY LỬA CHILL (COZY FIRE ENGINE)
+   ========================================= */
+let cineFireCanvas, cineCtx;
+let cineAnimationId = null;
+let particles = [];
+
+function startCinematicFire() {
+    // 1. Tạo Canvas
+    if (!document.getElementById('cinematic-fire-canvas')) {
+        cineFireCanvas = document.createElement('canvas');
+        cineFireCanvas.id = 'cinematic-fire-canvas';
+        document.body.appendChild(cineFireCanvas);
+        cineCtx = cineFireCanvas.getContext('2d');
+        
+        cineFireCanvas.width = window.innerWidth;
+        cineFireCanvas.height = 300;
+
+        window.addEventListener('resize', () => {
+            cineFireCanvas.width = window.innerWidth;
+        });
+    }
+
+    // 2. Hạt Lửa Mềm (Soft Flame)
+    class FlameParticle {
+        constructor() {
+            this.reset(true); // true = khởi tạo ngẫu nhiên trên màn hình để không bị trống lúc đầu
+        }
+
+        reset(initial = false) {
+            this.x = Math.random() * cineFireCanvas.width;
+            // Nếu là lần đầu, rải đều độ cao để lửa có sẵn. Nếu tái sinh thì xuất phát từ đáy.
+            this.y = initial ? Math.random() * cineFireCanvas.height : cineFireCanvas.height + 20;
+            
+            // TỐC ĐỘ RẤT CHẬM (Chill)
+            this.vy = Math.random() * -1 - 0.5; // Bay lên từ từ
+            this.vx = (Math.random() - 0.5) * 1; // Lắc lư nhẹ
+            
+            this.radius = Math.random() * 40 + 20; // Hạt to để tạo mảng màu lớn
+            this.life = Math.random() * 100 + 50;
+            this.maxLife = this.life;
+            
+            // MÀU SẮC ẤM CÚNG (Đỏ cam thẫm)
+            // R: 200-255 (Đỏ nhiều)
+            // G: 50-100 (Xanh lá ít -> Ra màu cam đất/đỏ)
+            const r = Math.floor(Math.random() * 55 + 200); 
+            const g = Math.floor(Math.random() * 50 + 30); 
+            this.color = `${r},${g},0`;
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life--;
+            this.radius -= 0.1; // Nhỏ dần rất chậm
+            
+            // Lắc lư mềm mại hình sin
+            this.x += Math.sin(this.life / 20) * 0.3;
+
+            if (this.life <= 0 || this.radius <= 0) {
+                this.reset();
+            }
+        }
+
+        draw(ctx) {
+            // Opacity thấp để các lớp chồng lên nhau mượt mà
+            const opacity = (this.life / this.maxLife) * 0.15;
+            
+            const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+            gradient.addColorStop(0, `rgba(${this.color}, ${opacity})`);
+            gradient.addColorStop(1, `rgba(${this.color}, 0)`);
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // 3. Tàn tro bay lững lờ (Floating Embers)
+    class Spark {
+        constructor() {
+            this.reset(true);
+        }
+        reset(initial = false) {
+            this.x = Math.random() * cineFireCanvas.width;
+            this.y = initial ? Math.random() * cineFireCanvas.height : cineFireCanvas.height;
+            
+            this.vy = Math.random() * -1.5 - 0.5; // Bay chậm hơn lửa cũ nhiều
+            this.vx = (Math.random() - 0.5) * 2; // Bay xiên xẹo tự nhiên
+            this.size = Math.random() * 2 + 0.5; // Nhỏ li ti
+            this.life = Math.random() * 150 + 100;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life--;
+            if (this.life <= 0) this.reset();
+        }
+        draw(ctx) {
+            // Màu vàng cam sáng
+            ctx.fillStyle = `rgba(255, 180, 50, ${this.life/200})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // 4. Khởi tạo
+    particles = [];
+    // Tăng số lượng hạt lửa lên để tạo nền dày đặc, ấm áp
+    for(let i=0; i<400; i++) particles.push(new FlameParticle());
+    // Giảm tàn tro đi cho đỡ rối mắt
+    for(let i=0; i<60; i++) particles.push(new Spark());
+
+    // 5. Vòng lặp
+    function animate() {
+        cineCtx.clearRect(0, 0, cineFireCanvas.width, cineFireCanvas.height);
+        
+        // Dùng 'screen' thay vì 'lighter' để màu đằm hơn, không bị cháy sáng trắng
+        cineCtx.globalCompositeOperation = 'screen'; 
+
+        particles.forEach(p => {
+            p.update();
+            p.draw(cineCtx);
+        });
+
+        cineAnimationId = requestAnimationFrame(animate);
+    }
+
+    if (cineAnimationId) cancelAnimationFrame(cineAnimationId);
+    animate();
 }
-document.addEventListener('click', function(e) {
-    if(e.target.tagName !== 'IMG' && e.target.id !== 'temp-slider') {
-        if(activeImg) { activeImg.classList.remove('active-img'); activeImg = null; }
-        const slider = document.getElementById('temp-slider'); if(slider) slider.remove();
+
+function stopCinematicFire() {
+    if (cineAnimationId) cancelAnimationFrame(cineAnimationId);
+    const canvas = document.getElementById('cinematic-fire-canvas');
+    if (canvas) canvas.remove();
+}
+/* =========================================
+   LOGIC ZEN MODE (TỰ ĐỘNG)
+   ========================================= */
+// Lấy lại tham chiếu editor (đề phòng)
+const zenEditor = document.getElementById('editor');
+
+// 1. KHI BẮT ĐẦU VIẾT -> VÀO ZEN MODE
+zenEditor.addEventListener('focus', () => {
+    // Chỉ kích hoạt khi nội dung đã đủ dài (tránh vừa vào đã mất hết nút)
+    // Hoặc kích hoạt luôn cho ngầu (ở đây mình để kích hoạt luôn)
+    document.body.classList.add('zen-mode');
+    
+    // Tắt luôn thanh công cụ nổi nếu đang hiện
+    const toolbar = document.getElementById('floating-toolbar');
+    if(toolbar) toolbar.style.display = 'none';
+});
+
+// 2. KHI CLICK RA NGOÀI -> THOÁT ZEN MODE
+zenEditor.addEventListener('blur', () => {
+    document.body.classList.remove('zen-mode');
+});
+
+// 3. MẸO NHỎ: Nếu người dùng di chuột lên vùng trên cùng (Header),
+// cũng tạm thời hiện lại các nút (để họ đỡ hoang mang nếu muốn thoát)
+document.addEventListener('mousemove', (e) => {
+    if (document.body.classList.contains('zen-mode')) {
+        // Nếu chuột di chuyển lên 100px trên cùng màn hình
+        if (e.clientY < 100) {
+            document.body.classList.remove('zen-mode');
+        }
     }
 });
