@@ -62,6 +62,43 @@ body.warm-theme { --bg-color: #2c1810; --text-main: #ffebd6; --text-dim: #d4b49c
 body.forest-theme { --bg-color: #142615; --text-main: #e8f5e9; --text-dim: #a5d6a7; --accent: #81c784; --glass: rgba(20, 38, 21, 0.95); }
 body.dream-theme { --bg-color: #1a0b2e; --text-main: #f3e5f5; --text-dim: #ce93d8; --accent: #d4a5a5; --glass: rgba(26, 11, 46, 0.95); }
 body.cold-theme { --bg-color: #1e272e; --text-main: #d2dae2; --text-dim: #808e9b; --accent: #4bcffa; --glass: rgba(30, 39, 46, 0.95); }
+/* --- CÁC THEME MỚI (DISTINCT & VIBRANT) --- */
+
+/* 1. Sakura (Hoa Anh Đào) - Đỏ rượu quyến rũ */
+body.sakura-theme {
+    --bg-color: #2c0b0e;       /* Đỏ rượu vang đậm */
+    --text-main: #ffd1d7;      /* Hồng phấn nhạt */
+    --text-dim: #d48fa0;       /* Hồng trầm */
+    --accent: #ff758c;         /* Hồng đào rực rỡ */
+    --glass: rgba(44, 11, 14, 0.95);
+}
+
+/* 2. Coffee (Cà Phê) - Nâu Espresso ấm cúng */
+body.coffee-theme {
+    --bg-color: #261C15;       /* Nâu đen Espresso */
+    --text-main: #EADBC8;      /* Màu kem sữa */
+    --text-dim: #A68A7C;       /* Nâu nhạt */
+    --accent: #D4A373;         /* Màu vàng nâu (Latte) */
+    --glass: rgba(38, 28, 21, 0.95);
+}
+
+/* 3. Cyberpunk (Tương Lai) - Tím Neon rực rỡ */
+body.cyber-theme {
+    --bg-color: #0b0c2a;       /* Xanh tím than sâu thẳm */
+    --text-main: #e0f7fa;      /* Trắng xanh */
+    --text-dim: #7986cb;       /* Tím nhạt */
+    --accent: #00f2ff;         /* Xanh Neon (Cyan) */
+    --glass: rgba(11, 12, 42, 0.95);
+}
+
+/* 4. Royal (Hoàng Gia) - Đen Vàng quyền lực */
+body.royal-theme {
+    --bg-color: #050505;       /* Đen tuyền (gần như tắt đèn) */
+    --text-main: #f5f5f5;      /* Trắng sứ */
+    --text-dim: #888888;       /* Xám bạc */
+    --accent: #FFD700;         /* Vàng kim loại (Gold) */
+    --glass: rgba(10, 10, 10, 0.98);
+}
 
 * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.4s ease; }
 /* ... (Copy lại phần Particles, Float Btn, Sidebar, Toast từ bài trước vào đây) ... */
@@ -157,8 +194,48 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.5); }
 .song-item .s-dur { font-size: 0.8rem; color: var(--text-dim); }
 
 /* (Giữ nguyên phần Toast, View, Write, Read, v.v...) */
-#toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 200; width: max-content; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.toast { background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 50px; border: 1px solid var(--accent); color: var(--text-main); font-size: 0.95rem; box-shadow: 0 5px 20px rgba(0,0,0,0.5); animation: slideDown 0.5s ease; display: flex; align-items: center; gap: 10px; }
+#toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    
+    /* FIX LỖI Ở ĐÂY: */
+    width: auto;          /* Để chiều rộng tự nhiên */
+    max-width: 90%;       /* Giới hạn tối đa 90% màn hình đt */
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.toast {
+    background: rgba(15, 15, 15, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 12px 25px; /* Giảm padding ngang chút cho gọn */
+    border-radius: 50px; /* Vẫn giữ bo tròn kiểu viên thuốc */
+    border: 1px solid var(--accent);
+    color: var(--text-main);
+    font-size: 0.95rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    animation: slideDown 0.5s ease;
+    
+    /* FIX LỖI Ở ĐÂY: */
+    display: inline-flex; /* Dùng inline-flex thay vì flex để co giãn theo nội dung */
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    
+    /* Quan trọng nhất: Cho phép xuống dòng */
+    white-space: normal; 
+    text-align: center;
+    line-height: 1.5;
+    
+    /* Nếu xuống dòng thì giảm bo góc đi xíu cho đỡ kỳ (tùy chọn) */
+    border-radius: 20px; 
+}
 @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
 
 .view { display: none; padding: 100px 20px; min-height: 100vh; position: relative; z-index: 10; opacity: 0; transform: translateY(20px); }
@@ -206,7 +283,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.5); }
 
 .story-wrapper { max-width: 700px; margin: 0 auto; text-align: center; }
 .read-title { font-family: var(--font-title); font-size: 4rem; margin-bottom: 20px; }
-.read-author { color: var(--text-dim); margin-bottom: 60px; font-style: italic; }
+.read-author { color: var(--text-dim);margin-bottom: 30px; font-style: italic; }
 .read-content { text-align: justify; font-size: 1.3rem; line-height: 1.8; color: var(--text-main); white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; max-width: 100%; }
 .read-content img { display: block; max-width: 100%; height: auto; border-radius: 15px; margin: 30px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 .read-nav { margin-top: 60px; display: flex; flex-direction: column; align-items: center; gap: 20px; padding-bottom: 50px; }
@@ -310,10 +387,32 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.5); }
     .left-pos { top: 15px; left: 15px; }
     
     /* Thông báo Toast nhỏ lại */
-    .toast {
-        width: 90%;
-        font-size: 0.85rem;
-        padding: 10px 15px;
+  .toast {
+        /* Luôn chiếm hết chiều ngang của khung chứa (95% màn hình) */
+        width: 100% !important;
+        
+        /* Chuyển sang Flexbox thường để nó tự duỗi thẳng ra */
+        display: flex !important; 
+        justify-content: center; /* Căn giữa nội dung */
+        
+        /* Bo góc ít lại cho giống thanh thông báo hiện đại */
+        border-radius: 15px !important; 
+        
+        /* Tăng vùng đệm cho thoáng */
+        padding: 12px 15px !important;
+        
+        /* Đảm bảo chữ không bị tràn */
+        box-sizing: border-box; 
+    }
+    #toast-container {
+        /* Ép khung rộng ra gần bằng màn hình */
+        width: 95% !important; 
+        max-width: none !important; /* Bỏ giới hạn cũ */
+        
+        /* Căn giữa màn hình */
+        left: 50%;
+        transform: translateX(-50%);
+        top: 15px; /* Cách mép trên một chút */
     }
     .action-row {
         gap: 20px; 
@@ -347,4 +446,208 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.5); }
 .sidebar .close-btn:hover {
     transform: rotate(180deg); 
     color: #ff4757;            
+}
+/* THANH CÔNG CỤ NỔI */
+.floating-toolbar {
+    display: none; /* Mặc định ẩn */
+    position: absolute;
+    z-index: 10000;
+    background: #222; /* Màu nền tối */
+    padding: 5px 8px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    gap: 5px;
+    transform: translateX(-50%) translateY(-10px); /* Căn giữa và đẩy lên trên */
+    transition: opacity 0.2s;
+}
+
+/* Mũi tên nhỏ chỉ xuống dưới (cho đẹp) */
+.floating-toolbar::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #222 transparent transparent transparent;
+}
+
+.floating-toolbar button {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px 8px;
+    border-radius: 4px;
+}
+
+.floating-toolbar button:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+
+.floating-toolbar .separator {
+    color: #555;
+    margin: 0 5px;
+    align-self: center;
+}
+
+/* =========================================
+   TÍNH NĂNG CHỈNH KÍCH THƯỚC ẢNH (KÉO GÓC)
+   ========================================= */
+
+/* 1. Hiệu ứng khi ảnh được chọn */
+.rich-editor img.active-img {
+    outline: 2px solid var(--accent); /* Viền màu chủ đạo */
+  box-shadow: 
+        0 0 15px var(--accent),
+        0 0 40px var(--accent);
+        
+    transition: none; /* Tắt chuyển động mượt khi đang kéo để không bị lag */
+    animation: glowPulse 2s infinite alternate;
+}
+@keyframes glowPulse {
+    from { box-shadow: 0 0 10px var(--accent); }
+    to   { box-shadow: 0 0 25px var(--accent), 0 0 50px var(--accent); }
+}
+
+/* 2. Nút tròn để nắm kéo (Resize Handle) */
+#resize-handle {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+   background: var(--accent);
+    border: 3px solid #fff; /* Viền trắng cho nổi bật */
+    border-radius: 50%; /* Hình tròn */
+    cursor: se-resize; /* Con trỏ hình mũi tên chéo */
+    z-index: 10002; /* Nằm trên cùng */
+    display: none; /* Mặc định ẩn */
+   box-shadow: 0 0 15px var(--accent);
+    
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Khi chạm vào nút kéo */
+#resize-handle:hover, #resize-handle:active {
+    transform: scale(1.2); /* Phóng to nhẹ */
+    background: #fff; /* Đổi màu nền thành trắng */
+    border-color: var(--accent); /* Đổi viền thành màu theme */
+    cursor: se-resize;/* Đổi màu đỏ khi kéo */
+}
+/* =========================================
+   CÁC HIỆU ỨNG NỀN (ĐÃ SỬA LỖI ĐOM ĐÓM)
+   ========================================= */
+
+/* 1. CẤU HÌNH CHUNG */
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0; /* Mặc định ẩn luôn để tránh nháy hình */
+    pointer-events: none;
+    
+    /* QUAN TRỌNG: Giữ trạng thái của frame 0% trong lúc chờ delay */
+    animation-fill-mode: both !important; 
+}
+
+/* 2. HIỆU ỨNG TUYẾT (SNOW) */
+.particle.snow {
+    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+    animation: floatUp linear infinite;
+}
+@keyframes floatUp { 
+    0% { transform: translateY(110vh); opacity: 0; } 
+    10% { opacity: 0.6; } /* Hiện ra từ từ */
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh); opacity: 0; } 
+}
+
+/* 3. HIỆU ỨNG ĐOM ĐÓM (FIREFLY) */
+.particle.firefly {
+    background: #ffd700;
+    box-shadow: 0 0 10px #ffd700, 0 0 20px #ffea00; /* Phát sáng mạnh hơn tí */
+    /* Kết hợp 2 chuyển động: Bay lượn và Nhấp nháy */
+    animation: 
+        flyAround linear infinite, 
+        flicker 3s ease-in-out infinite alternate;
+}
+
+@keyframes flyAround {
+    0% { 
+        transform: translate(0, 110vh); /* Xuất phát từ dưới đáy màn hình */
+    }
+    100% { 
+        transform: translate(100px, -10vh); /* Bay lên trên */
+    }
+}
+
+@keyframes flicker {
+    0% { opacity: 0.2; scale: 0.8; }
+    50% { opacity: 1; scale: 1.2; }
+    100% { opacity: 0.2; scale: 0.8; }
+}
+
+/* 4. HIỆU ỨNG MƯA (RAIN) */
+.particle.rain {
+    background: rgba(255, 255, 255, 0.5);
+    width: 1px !important;
+    animation: rainDown linear infinite;
+}
+@keyframes rainDown {
+    0% { transform: translateY(-10vh); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(110vh); opacity: 0; }
+}
+/* =========================================
+   HIỆU ỨNG LỬA CHILL (COZY FIRE)
+   ========================================= */
+#cinematic-fire-canvas {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 300px; /* Lửa thấp xuống một chút cho tinh tế */
+    z-index: -1;
+    pointer-events: none;
+    
+    /* BÍ QUYẾT CỦA SỰ CHILL: 
+       Blur cực mạnh (10px) để biến các hạt lửa thành đám mây nhiệt ấm áp.
+       Opacity giảm xuống để không chiếm hết sự chú ý. */
+    filter: blur(10px) contrast(1.1); 
+    opacity: 0.6; 
+    
+    /* Hòa trộn nhẹ nhàng, không cháy gắt */
+    mix-blend-mode: screen; 
+}
+/* =========================================
+   ZEN MODE (CHẾ ĐỘ NHẬP THẤT)
+   ========================================= */
+
+/* Khi body có class 'zen-mode', ẩn hết các thứ râu ria đi */
+body.zen-mode .float-btn,       /* Nút menu góc */
+body.zen-mode .input-nick,      /* Ô nhập tên */
+body.zen-mode .input-title,     /* Ô nhập tiêu đề */
+body.zen-mode .editor-tools,    /* Thanh công cụ chèn ảnh */
+body.zen-mode .action-row,      /* Nút gửi bài/quay lại */
+body.zen-mode .logo,            /* Logo (nếu có) */
+body.zen-mode .intro            /* Dòng giới thiệu */
+{
+    opacity: 0;                 /* Mờ dần */
+    pointer-events: none;       /* Không bấm nhầm được khi đang ẩn */
+    filter: blur(5px);          /* Làm nhòe đi trước khi biến mất */
+    transition: all 0.8s ease;  /* Thời gian biến mất chậm rãi */
+}
+
+/* Riêng khung soạn thảo thì làm nổi bật lên */
+body.zen-mode .rich-editor {
+    transform: scale(1.05);     /* Phóng to nhẹ (Zoom in) */
+    text-shadow: 0 0 10px rgba(255,255,255,0.2); /* Chữ phát sáng nhẹ */
+    transition: all 1.5s ease;
+}
+
+/* Đảm bảo các thành phần này hiện lại mượt mà khi thoát Zen Mode */
+.float-btn, .input-nick, .input-title, .editor-tools, .action-row, .rich-editor {
+    transition: all 0.8s ease;
 }
