@@ -96,6 +96,30 @@
             <button class="theme-item forest" onclick="setTheme('forest')"><div class="color-dot" style="background:#142615; border-color:#81c784"></div> Chữa lành</button>
             <button class="theme-item dream" onclick="setTheme('dream')"><div class="color-dot" style="background:#1a0b2e; border-color:#d4a5a5"></div> Mộng mơ</button>
             <button class="theme-item cold" onclick="setTheme('cold')"><div class="color-dot" style="background:#1e272e; border-color:#4bcffa"></div> Lạnh giá</button>
+            <button class="theme-item sakura" onclick="setTheme('sakura')">
+    <div class="color-dot" style="background:#2c0b0e; border-color:#ff758c"></div> Rượu vang
+</button>
+
+<button class="theme-item coffee" onclick="setTheme('coffee')">
+    <div class="color-dot" style="background:#261C15; border-color:#D4A373"></div> Coffee
+</button>
+
+<button class="theme-item cyber" onclick="setTheme('cyber')">
+    <div class="color-dot" style="background:#0b0c2a; border-color:#00f2ff"></div> Cyberpunk
+</button>
+
+<button class="theme-item royal" onclick="setTheme('royal')">
+    <div class="color-dot" style="background:#000000; border-color:#ffd700"></div> Hoàng Gia
+</button>
+        </div>
+        <h3 class="menu-title" style="margin-top: 30px;">Hiệu Ứng Nền</h3>
+        <div class="theme-picker">
+            <button class="theme-item" onclick="setEffect('snow')"><i class="fas fa-snowflake"></i> Tuyết rơi (Mặc định)</button>
+            <button class="theme-item" onclick="setEffect('firefly')"><i class="fas fa-lightbulb"></i> Đom đóm đêm</button>
+            <button class="theme-item" onclick="setEffect('rain')"><i class="fas fa-cloud-rain"></i> Mưa bay</button>
+            <button class="theme-item" onclick="setEffect('fire')">
+        <i class="fas fa-fire-alt" style="color: #ff4500;"></i> Lửa thiêng
+    </button>
         </div>
     </div>
 
@@ -124,6 +148,7 @@
                     <input type="file" id="img-upload" hidden onchange="handleImage(this)">
                     <button class="tool-btn" onclick="document.getElementById('img-upload').click()"><i class="fas fa-image"></i> Chọn ảnh</button>
                     <div id="preview-box"></div>
+                    <div id="resize-handle"></div>
                 </div>
                 <div class="action-row">
                     <button class="soft-btn back-btn" onclick="goHome()">Quay lại</button>
@@ -144,6 +169,34 @@
             </article>
         </section>
     </main>
+   <div id="floating-toolbar" class="floating-toolbar">
+    <button onmousedown="formatText('justifyLeft')" title="Căn trái">
+        <i class="fas fa-align-left"></i>
+    </button>
+    
+    <button onmousedown="formatText('justifyCenter')" title="Căn giữa">
+        <i class="fas fa-align-center"></i>
+    </button>
+    
+    <button onmousedown="formatText('justifyRight')" title="Căn phải">
+        <i class="fas fa-align-right"></i>
+    </button>
+    
+    <button onmousedown="formatText('justifyFull')" title="Căn đều">
+        <i class="fas fa-align-justify"></i>
+    </button>
+
+    <span class="separator">|</span>
+    
+    <button onmousedown="formatText('italic')" title="In nghiêng">
+        <i class="fas fa-italic"></i>
+    </button>
+
+    <span class="separator">|</span>
+    <button id="btn-quote-selection" onmousedown="captureSelectionQuote()" title="Tạo ảnh trích dẫn">
+        <i class="fas fa-quote-right"></i>
+    </button>
+</div>
 <script type="module" src="script.js"></script>
 
 </body>
