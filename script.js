@@ -117,6 +117,13 @@ const defaultSongs = [
     { name: "Cinnamon Girl - Lana Dey Rey", url: "music/Cinnamon Girl - Lana Dey Rey.mp3" },
     { name: "Brooklyn Baby - Lana Del Rey", url: "music/Brooklyn Baby - Lana Del Rey.mp3" },
     { name: "Say Yes To Heaven - Lana Del Rey", url: "music/Say Yes To Heaven - Lana Del Rey.mp3" },
+    { name: "Love Story - Indila", url: "music/Love Story - Indila.mp3" },
+    { name: "Snowman - Sia", url: "music/Snowman - Sia.mp3" },
+    { name: "Blue - yung kai", url: "music/Blue - yung kai.mp3" },
+    { name: "Perfect - Ed Sheeran", url: "music/Perfect - Ed Sheeran.mp3" },
+    { name: "Photograph - Ed Sheeran", url: "music/Photograph - Ed Sheeran.mp3" },
+    { name: "50 Feet - SoMo", url: "music/50 Feet - SoMo.mp3" },
+    { name: "Double take - Dhruv", url: "music/Double take - Dhruv.mp3" },
     { name: "Lovely - Billie Eilish, Khalid", url: "music/Lovely - Billie Eilish, Khalid.mp3" },
     { name: "Take Me To Church - Hozier", url: "music/Take Me To Church - Hozier.mp3" },
     { name: "Daylight - David Kushner", url: "music/Daylight - David Kushner.mp3" },
@@ -124,6 +131,7 @@ const defaultSongs = [
     { name: "Chemtrails Over The Country Club - Lana Del Rey", url: "music/Chemtrails Over The Country Club - Lana Del Rey.mp3" },
     { name: "I Wanna Be Yours", url: "music/I Wanna Be Yours.mp3" },
     { name: "Die With A Smile - Lady Gaga, Bruno Mars", url: "music/Die With A Smile - Lady Gaga, Bruno Mars.mp3" },
+    { name: "Luther - Kendrick Lamar", url: "music/Luther - Kendrick Lamar.mp3" }
 
 
 ];
@@ -953,3 +961,4 @@ document.addEventListener('mousemove', (e) => {
         }
     }
 });
+
